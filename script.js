@@ -1,4 +1,13 @@
-const API = "/students";
+const STORAGE_KEY = "students";
+
+function getStudents() {
+    const data = localStorage.getItem(STORAGE_KEY);
+    return data ? JSON.parse(data) : [];
+}
+
+function saveStudents(students) {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(students));
+}
 
 const studentForm = document.getElementById("studentForm");
 const tableBody = document.getElementById("tableBody");
@@ -8,10 +17,11 @@ const editSection = document.getElementById("editSection");
 const editForm = document.getElementById("editForm");
 
 if (studentForm) {
-    studentForm.addEventListener("submit", async (event) => {
+    studentForm.addEventListener("submit", (event) => {
         event.preventDefault();
 
         const student = {
+            id: Date.now(),
             name: document.getElementById("name").value.trim(),
             roll: document.getElementById("roll").value.trim(),
             class: document.getElementById("studentClass").value.trim(),
@@ -19,22 +29,12 @@ if (studentForm) {
             marks: Number(document.getElementById("marks").value)
         };
 
-        try {
-            const response = await fetch(API, {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(student)
-            });
+        const students = getStudents();
+        students.push(student);
+        saveStudents(students);
 
-            if (response.ok) {
-                alert("Student added successfully.");
-                studentForm.reset();
-            } else {
-                alert("Failed to add student. Please try again.");
-            }
-        } catch (error) {
-            alert("Error: Could not connect to server. Make sure the server is running.");
-        }
+        alert("Student added successfully.");
+        studentForm.reset();
     });
 }
 
@@ -54,10 +54,10 @@ if (refreshButton) {
 }
 
 if (editForm) {
-    editForm.addEventListener("submit", async (event) => {
+    editForm.addEventListener("submit", (event) => {
         event.preventDefault();
 
-        const id = document.getElementById("editId").value;
+        const id = Number(document.getElementById("editId").value);
         const updatedStudent = {
             name: document.getElementById("editName").value.trim(),
             roll: document.getElementById("editRoll").value.trim(),
@@ -66,21 +66,15 @@ if (editForm) {
             marks: Number(document.getElementById("editMarks").value)
         };
 
-        try {
-            const response = await fetch(`${API}/${id}`, {
-                method: "PUT",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(updatedStudent)
-            });
-
-            if (response.ok) {
-                hideEditPanel();
-                loadStudents(searchInput ? searchInput.value.trim() : "");
-            } else {
-                alert("Failed to update student. Please try again.");
-            }
-        } catch (error) {
-            alert("Error: Could not connect to server. Make sure the server is running.");
+        const students = getStudents();
+        const index = students.findIndex((student) => student.id === id);
+        if (index !== -1) {
+            students[index] = { ...students[index], ...updatedStudent };
+            saveStudents(students);
+            hideEditPanel();
+            loadStudents(searchInput ? searchInput.value.trim() : "");
+        } else {
+            alert("Student not found.");
         }
     });
 }
@@ -110,14 +104,16 @@ function hideEditPanel() {
     editForm.reset();
 }
 
-async function loadStudents(query = "") {
-    let url = API;
-    if (query) {
-        url += `?q=${encodeURIComponent(query)}`;
-    }
+function loadStudents(query = "") {
+    let students = getStudents();
 
-    const response = await fetch(url);
-    const students = await response.json();
+    if (query) {
+        const q = query.toLowerCase();
+        students = students.filter((student) => {
+            return [student.name, student.roll, student.class, student.section]
+                .some((value) => value.toString().toLowerCase().includes(q));
+        });
+    }
 
     tableBody.innerHTML = "";
 
@@ -154,13 +150,15 @@ async function loadStudents(query = "") {
     });
 }
 
-async function deleteStudent(id) {
+function deleteStudent(id) {
     const confirmed = confirm("Delete this student permanently?");
     if (!confirmed) {
         return;
     }
 
-    await fetch(`${API}/${id}`, { method: "DELETE" });
+    const students = getStudents();
+    const filtered = students.filter((student) => student.id !== id);
+    saveStudents(filtered);
     loadStudents(searchInput ? searchInput.value.trim() : "");
 }
 
