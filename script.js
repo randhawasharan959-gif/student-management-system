@@ -17,11 +17,10 @@ const editSection = document.getElementById("editSection");
 const editForm = document.getElementById("editForm");
 
 if (studentForm) {
-    studentForm.addEventListener("submit", (event) => {
+    studentForm.addEventListener("submit", async (event) => {
         event.preventDefault();
 
         const student = {
-            id: Date.now(),
             name: document.getElementById("name").value.trim(),
             roll: document.getElementById("roll").value.trim(),
             class: document.getElementById("studentClass").value.trim(),
@@ -29,12 +28,28 @@ if (studentForm) {
             marks: Number(document.getElementById("marks").value)
         };
 
-        const students = getStudents();
-        students.push(student);
-        saveStudents(students);
-
-        alert("Student added successfully.");
-        studentForm.reset();
+        try {
+            const res = await fetch('/students', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(student)
+            });
+            if (res.ok) {
+                alert("Student added successfully.");
+                studentForm.reset();
+            } else {
+                alert("Failed to add student.");
+            }
+        } catch (error) {
+            alert("Error adding student. Using local storage as fallback.");
+            // Fallback to localStorage
+            const students = getStudents();
+            student.id = Date.now();
+            students.push(student);
+            saveStudents(students);
+            alert("Student added successfully (local).");
+            studentForm.reset();
+        }
     });
 }
 
@@ -54,7 +69,7 @@ if (refreshButton) {
 }
 
 if (editForm) {
-    editForm.addEventListener("submit", (event) => {
+    editForm.addEventListener("submit", async (event) => {
         event.preventDefault();
 
         const id = Number(document.getElementById("editId").value);
@@ -66,15 +81,31 @@ if (editForm) {
             marks: Number(document.getElementById("editMarks").value)
         };
 
-        const students = getStudents();
-        const index = students.findIndex((student) => student.id === id);
-        if (index !== -1) {
-            students[index] = { ...students[index], ...updatedStudent };
-            saveStudents(students);
-            hideEditPanel();
-            loadStudents(searchInput ? searchInput.value.trim() : "");
-        } else {
-            alert("Student not found.");
+        try {
+            const res = await fetch(`/students/${id}`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(updatedStudent)
+            });
+            if (res.ok) {
+                hideEditPanel();
+                loadStudents(searchInput ? searchInput.value.trim() : "");
+            } else {
+                alert("Failed to update student.");
+            }
+        } catch (error) {
+            alert("Error updating student. Using local storage as fallback.");
+            // Fallback to localStorage
+            const students = getStudents();
+            const index = students.findIndex((student) => student.id === id);
+            if (index !== -1) {
+                students[index] = { ...students[index], ...updatedStudent };
+                saveStudents(students);
+                hideEditPanel();
+                loadStudents(searchInput ? searchInput.value.trim() : "");
+            } else {
+                alert("Student not found.");
+            }
         }
     });
 }
@@ -104,50 +135,90 @@ function hideEditPanel() {
     editForm.reset();
 }
 
-function loadStudents(query = "") {
-    let students = getStudents();
+async function loadStudents(query = "") {
+    try {
+        const url = query ? `/students?q=${encodeURIComponent(query)}` : '/students';
+        const students = await fetch(url).then(r => r.json());
 
-    if (query) {
-        const q = query.toLowerCase();
-        students = students.filter((student) => {
-            return [student.name, student.roll, student.class, student.section]
-                .some((value) => value.toString().toLowerCase().includes(q));
+        tableBody.innerHTML = "";
+
+        if (students.length === 0) {
+            tableBody.innerHTML = `<tr><td colspan="6">No students found.</td></tr>`;
+            return;
+        }
+
+        students.forEach((student) => {
+            const row = document.createElement("tr");
+            row.innerHTML = `
+                <td>${student.name}</td>
+                <td>${student.roll}</td>
+                <td>${student.class}</td>
+                <td>${student.section}</td>
+                <td>${student.marks}</td>
+                <td class="actions"></td>
+            `;
+
+            const actionsCell = row.querySelector(".actions");
+            const editButton = document.createElement("button");
+            editButton.type = "button";
+            editButton.className = "secondary";
+            editButton.textContent = "Edit";
+            editButton.addEventListener("click", () => showEditPanel(student));
+
+            const deleteButton = document.createElement("button");
+            deleteButton.type = "button";
+            deleteButton.textContent = "Delete";
+            deleteButton.addEventListener("click", () => deleteStudent(student.id));
+
+            actionsCell.append(editButton, deleteButton);
+            tableBody.appendChild(row);
+        });
+    } catch (error) {
+        // Fallback to localStorage
+        let students = getStudents();
+
+        if (query) {
+            const q = query.toLowerCase();
+            students = students.filter((student) => {
+                return [student.name, student.roll, student.class, student.section]
+                    .some((value) => value.toString().toLowerCase().includes(q));
+            });
+        }
+
+        tableBody.innerHTML = "";
+
+        if (students.length === 0) {
+            tableBody.innerHTML = `<tr><td colspan="6">No students found.</td></tr>`;
+            return;
+        }
+
+        students.forEach((student) => {
+            const row = document.createElement("tr");
+            row.innerHTML = `
+                <td>${student.name}</td>
+                <td>${student.roll}</td>
+                <td>${student.class}</td>
+                <td>${student.section}</td>
+                <td>${student.marks}</td>
+                <td class="actions"></td>
+            `;
+
+            const actionsCell = row.querySelector(".actions");
+            const editButton = document.createElement("button");
+            editButton.type = "button";
+            editButton.className = "secondary";
+            editButton.textContent = "Edit";
+            editButton.addEventListener("click", () => showEditPanel(student));
+
+            const deleteButton = document.createElement("button");
+            deleteButton.type = "button";
+            deleteButton.textContent = "Delete";
+            deleteButton.addEventListener("click", () => deleteStudent(student.id));
+
+            actionsCell.append(editButton, deleteButton);
+            tableBody.appendChild(row);
         });
     }
-
-    tableBody.innerHTML = "";
-
-    if (students.length === 0) {
-        tableBody.innerHTML = `<tr><td colspan="6">No students found.</td></tr>`;
-        return;
-    }
-
-    students.forEach((student) => {
-        const row = document.createElement("tr");
-        row.innerHTML = `
-            <td>${student.name}</td>
-            <td>${student.roll}</td>
-            <td>${student.class}</td>
-            <td>${student.section}</td>
-            <td>${student.marks}</td>
-            <td class="actions"></td>
-        `;
-
-        const actionsCell = row.querySelector(".actions");
-        const editButton = document.createElement("button");
-        editButton.type = "button";
-        editButton.className = "secondary";
-        editButton.textContent = "Edit";
-        editButton.addEventListener("click", () => showEditPanel(student));
-
-        const deleteButton = document.createElement("button");
-        deleteButton.type = "button";
-        deleteButton.textContent = "Delete";
-        deleteButton.addEventListener("click", () => deleteStudent(student.id));
-
-        actionsCell.append(editButton, deleteButton);
-        tableBody.appendChild(row);
-    });
 }
 
 function deleteStudent(id) {
@@ -156,9 +227,20 @@ function deleteStudent(id) {
         return;
     }
 
-    const students = getStudents();
-    const filtered = students.filter((student) => student.id !== id);
-    saveStudents(filtered);
-    loadStudents(searchInput ? searchInput.value.trim() : "");
+    fetch(`/students/${id}`, { method: 'DELETE' })
+        .then(res => {
+            if (res.ok) {
+                loadStudents(searchInput ? searchInput.value.trim() : "");
+            } else {
+                alert("Failed to delete student.");
+            }
+        })
+        .catch(error => {
+            // Fallback to localStorage
+            const students = getStudents();
+            const filtered = students.filter((student) => student.id !== id);
+            saveStudents(filtered);
+            loadStudents(searchInput ? searchInput.value.trim() : "");
+        });
 }
 
