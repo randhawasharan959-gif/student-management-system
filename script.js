@@ -41,13 +41,12 @@ if (studentForm) {
                 alert("Failed to add student.");
             }
         } catch (error) {
-            alert("Error adding student. Using local storage as fallback.");
             // Fallback to localStorage
             const students = getStudents();
             student.id = Date.now();
             students.push(student);
             saveStudents(students);
-            alert("Student added successfully (local).");
+            alert("Student added successfully (local storage).");
             studentForm.reset();
         }
     });

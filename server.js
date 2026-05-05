@@ -4,7 +4,7 @@ const path = require("path");
 const cors = require("cors");
 
 const app = express();
-const PORT = 3000;
+const PORT = process.env.PORT || 3000;
 const DATA_FILE = path.join(__dirname, "data.json");
 
 app.use(cors());
@@ -57,11 +57,11 @@ app.post("/students", (req, res) => {
     const students = readData();
     const newStudent = {
         id: Date.now(),
-        name: req.body.name || "",
-        roll: req.body.roll || "",
-        class: req.body.class || "",
-        section: req.body.section || "",
-        marks: Number(req.body.marks) || 0
+        name: req.body.name !== undefined ? req.body.name : "",
+        roll: req.body.roll !== undefined ? req.body.roll : "",
+        class: req.body.class !== undefined ? req.body.class : "",
+        section: req.body.section !== undefined ? req.body.section : "",
+        marks: req.body.marks !== undefined ? Number(req.body.marks) : 0
     };
 
     students.push(newStudent);
@@ -79,11 +79,11 @@ app.put("/students/:id", (req, res) => {
             updated = true;
             return {
                 ...student,
-                name: req.body.name || student.name,
-                roll: req.body.roll || student.roll,
-                class: req.body.class || student.class,
-                section: req.body.section || student.section,
-                marks: Number(req.body.marks) || student.marks
+                name: req.body.name !== undefined ? req.body.name : student.name,
+                roll: req.body.roll !== undefined ? req.body.roll : student.roll,
+                class: req.body.class !== undefined ? req.body.class : student.class,
+                section: req.body.section !== undefined ? req.body.section : student.section,
+                marks: req.body.marks !== undefined ? Number(req.body.marks) : student.marks
             };
         }
         return student;
