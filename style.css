@@ -1,0 +1,221 @@
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+    background: #eef2f7;
+    color: #1b263b;
+}
+
+.app-shell {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+header {
+    padding: 32px 24px 16px;
+    text-align: center;
+    background: linear-gradient(135deg, #3b82f6, #2563eb);
+    color: white;
+}
+
+header h1 {
+    margin: 0 0 8px;
+    font-size: clamp(2rem, 3vw, 3rem);
+}
+
+header p {
+    margin: 0;
+    opacity: 0.9;
+}
+
+.top-nav {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 12px;
+    padding: 16px 24px;
+    background: #ffffff;
+    border-bottom: 1px solid #d6d6d6;
+}
+
+.top-nav a {
+    text-decoration: none;
+    color: #334155;
+    padding: 10px 18px;
+    border-radius: 8px;
+    transition: background 0.2s ease, color 0.2s ease;
+}
+
+.top-nav a:hover,
+.top-nav a.active {
+    background: #3b82f6;
+    color: white;
+}
+
+main {
+    flex: 1;
+    width: min(1200px, 100%);
+    margin: 24px auto;
+    padding: 0 24px 24px;
+}
+
+.card {
+    background: white;
+    border-radius: 18px;
+    box-shadow: 0 18px 45px rgba(15, 23, 42, 0.08);
+    padding: 24px;
+    margin-bottom: 24px;
+}
+
+.home-card {
+    text-align: center;
+    padding: 44px 24px;
+}
+
+.home-card h2 {
+    margin-top: 0;
+}
+
+.button-group {
+    display: flex;
+    justify-content: center;
+    gap: 14px;
+    flex-wrap: wrap;
+    margin-top: 20px;
+}
+
+.button,
+button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 12px 20px;
+    border: none;
+    border-radius: 12px;
+    background: #3b82f6;
+    color: white;
+    font-size: 1rem;
+    cursor: pointer;
+    text-decoration: none;
+    transition: transform 0.2s ease, background 0.2s ease;
+}
+
+.button.secondary,
+button.secondary {
+    background: #64748b;
+}
+
+.button:hover,
+button:hover {
+    transform: translateY(-1px);
+}
+
+label {
+    display: block;
+    margin: 12px 0 6px;
+    font-weight: 600;
+}
+
+input,
+select,
+textarea {
+    width: 100%;
+    max-width: 100%;
+    padding: 12px 14px;
+    border-radius: 12px;
+    border: 1px solid #cbd5e1;
+    background: #f8fafc;
+    font-size: 1rem;
+}
+
+input:focus,
+select:focus,
+textarea:focus {
+    outline: none;
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.12);
+}
+
+form button {
+    margin-top: 18px;
+    width: 100%;
+}
+
+.table-wrapper {
+    overflow-x: auto;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 720px;
+}
+
+thead {
+    background: #f8fafc;
+}
+
+th,
+td {
+    text-align: left;
+    padding: 14px 16px;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+td.actions {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+tr:hover {
+    background: #f8fafc;
+}
+
+.hidden {
+    display: none;
+}
+
+.search-row {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    flex-wrap: wrap;
+    margin-bottom: 20px;
+}
+
+.search-row input {
+    flex: 1;
+    min-width: 240px;
+}
+
+.footer,
+footer {
+    padding: 18px 24px;
+    text-align: center;
+    color: #475569;
+}
+
+button[type="button"] {
+    min-width: 120px;
+}
+
+@media (max-width: 720px) {
+    .top-nav {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    th,
+td {
+        padding: 12px 10px;
+    }
+
+    .button-group {
+        flex-direction: column;
+    }
+}

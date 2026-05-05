@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>View Students</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <div class="app-shell">
+        <header>
+            <h1>Student List</h1>
+            <p>Search, edit, or remove students from the record list.</p>
+        </header>
+
+        <nav class="top-nav">
+            <a href="index.html">Home</a>
+            <a href="add.html">Add Student</a>
+            <a href="view.html" class="active">View Students</a>
+        </nav>
+
+        <main>
+            <section class="card">
+                <div class="search-row">
+                    <input type="search" id="searchInput" placeholder="Search by name, roll, class, or section">
+                    <button id="refreshButton" type="button">Refresh</button>
+                </div>
+
+                <div class="table-wrapper">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Roll</th>
+                                <th>Class</th>
+                                <th>Section</th>
+                                <th>Marks</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tableBody"></tbody>
+                    </table>
+                </div>
+            </section>
+
+            <section class="card hidden" id="editSection">
+                <h2>Edit Student</h2>
+                <form id="editForm">
+                    <input type="hidden" id="editId">
+                    <label for="editName">Name</label>
+                    <input type="text" id="editName" required>
+
+                    <label for="editRoll">Roll No</label>
+                    <input type="text" id="editRoll" required>
+
+                    <label for="editClass">Class</label>
+                    <input type="text" id="editClass" required>
+
+                    <label for="editSection">Section</label>
+                    <input type="text" id="editSectionInput" required>
+
+                    <label for="editMarks">Marks</label>
+                    <input type="number" id="editMarks" min="0" max="100" required>
+
+                    <div class="button-row">
+                        <button type="submit">Save Changes</button>
+                        <button type="button" id="cancelEditButton" class="secondary">Cancel</button>
+                    </div>
+                </form>
+            </section>
+        </main>
+
+        <footer>
+            <p>Changes are saved on the backend server immediately.</p>
+        </footer>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+
+</html>

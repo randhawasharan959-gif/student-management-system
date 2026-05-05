@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Student</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <div class="app-shell">
+        <header>
+            <h1>Add Student</h1>
+            <p>Enter student details and save them to the system.</p>
+        </header>
+
+        <nav class="top-nav">
+            <a href="index.html">Home</a>
+            <a href="add.html" class="active">Add Student</a>
+            <a href="view.html">View Students</a>
+        </nav>
+
+        <main>
+            <form id="studentForm" class="card">
+                <label for="name">Name</label>
+                <input type="text" placeholder="Name" id="name" required>
+
+                <label for="roll">Roll No</label>
+                <input type="text" placeholder="Roll No" id="roll" required>
+
+                <label for="studentClass">Class</label>
+                <input type="text" placeholder="Class" id="studentClass" required>
+
+                <label for="section">Section</label>
+                <input type="text" placeholder="Section" id="section" required>
+
+                <label for="marks">Marks</label>
+                <input type="number" placeholder="Marks" id="marks" min="0" max="100" required>
+
+                <button type="submit">Save Student</button>
+            </form>
+        </main>
+
+        <footer>
+            <p>Student data is stored on the backend.</p>
+        </footer>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+
+</html>
