@@ -19,14 +19,22 @@ if (studentForm) {
             marks: Number(document.getElementById("marks").value)
         };
 
-        await fetch(API, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(student)
-        });
+        try {
+            const response = await fetch(API, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(student)
+            });
 
-        alert("Student added successfully.");
-        studentForm.reset();
+            if (response.ok) {
+                alert("Student added successfully.");
+                studentForm.reset();
+            } else {
+                alert("Failed to add student. Please try again.");
+            }
+        } catch (error) {
+            alert("Error: Could not connect to server. Make sure the server is running.");
+        }
     });
 }
 
@@ -58,14 +66,22 @@ if (editForm) {
             marks: Number(document.getElementById("editMarks").value)
         };
 
-        await fetch(`${API}/${id}`, {
-            method: "PUT",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(updatedStudent)
-        });
+        try {
+            const response = await fetch(`${API}/${id}`, {
+                method: "PUT",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(updatedStudent)
+            });
 
-        hideEditPanel();
-        loadStudents(searchInput ? searchInput.value.trim() : "");
+            if (response.ok) {
+                hideEditPanel();
+                loadStudents(searchInput ? searchInput.value.trim() : "");
+            } else {
+                alert("Failed to update student. Please try again.");
+            }
+        } catch (error) {
+            alert("Error: Could not connect to server. Make sure the server is running.");
+        }
     });
 }
 
