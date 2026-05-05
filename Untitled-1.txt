@@ -1,0 +1,11 @@
+project/
+│
+├── public/
+│   ├── index.html
+│   ├── add.html
+│   ├── view.html
+│   ├── style.css
+│   └── script.js
+│
+├── server.js
+└── data.json
