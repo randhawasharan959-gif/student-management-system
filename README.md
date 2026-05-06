@@ -10,14 +10,23 @@ A simple web app to manage student records.
 - Delete students
 
 ## How to Use
+### Local Development (with server)
 1. Install dependencies: `npm install`
 2. Start the server: `npm start`
 3. Open `http://localhost:3000` in your browser.
 4. Navigate to "Add Student" to enter new student info.
 5. Go to "View Students" to see, search, edit, or delete records.
 
+### Static Hosting (e.g., GitHub Pages)
+The app works offline using localStorage in the browser. No server required.
+1. Open `index.html` in your browser.
+2. Data is stored locally and persists in your browser.
+
 ## Data Storage
-Student data is stored on the backend server in `data.json`. It persists across sessions and is shared if multiple users access the same server.
+- **Server mode**: Data stored in `data.json` on the backend.
+- **Static mode**: Data stored in browser's localStorage (per browser/device).
 
 ## Deployment
-For local use, run the server as above. For static hosting like GitHub Pages, the app falls back to localStorage in the browser.
+- **GitHub Pages**: Push to main branch; the site deploys automatically.
+- **Local server**: Use Node.js server for shared data.
+- **Static**: Open HTML files directly for offline use.
