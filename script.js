@@ -1,4 +1,5 @@
 const STORAGE_KEY = "students";
+// Updated for static GitHub Pages deployment and localStorage fallback
 
 function getStudents() {
     const data = localStorage.getItem(STORAGE_KEY);
